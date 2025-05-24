@@ -1,0 +1,102 @@
+
+.service-heading {
+  text-align: center;
+  font-size: 45px;
+  font-weight: 800;
+  margin-top: 40px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.service-para {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 40px;
+}
+
+.service-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.service-items {
+  list-style: none;
+  color: rgb(17, 125, 226);
+  display: flex;             /* ➜ Horizontal layout */
+  gap: 30px;                 /* ➜ Spacing between items */
+  justify-content: center;
+  flex-wrap: wrap;           /* ➜ Wrap to next line on small screens */
+  font-size: 24px;
+  font-weight: 600;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 80px;
+  position: relative;
+}
+
+.s-items {
+  position: relative;
+  padding: 10px 20px;
+  cursor: pointer;
+  list-style-type: none;
+  
+}
+
+
+/* Dropdown base */
+.dropdown-menu,
+.dropdown-submenu {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 10px;
+  z-index: 1000;
+  min-width: 220px;
+  top: 100%;
+  left: 0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Show on hover */
+.dropdown:hover > .dropdown-menu {
+  display: block;
+}
+
+/* Sub-submenu positioning */
+.dropdown-item {
+  position: relative;
+}
+
+.dropdown-item:hover > .dropdown-submenu {
+  display: block;
+  top: 0;
+  left: 100%;
+  margin-left: 5px;
+}
+
+/* Styling subitems */
+.dropdown-menu li,
+.dropdown-submenu li {
+  list-style: none;
+  font-size: 16px;
+  padding: 6px 10px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.dropdown-menu li:hover,
+.dropdown-submenu li:hover {
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+/* Image */
+.service-image {
+  height: 325px;
+}

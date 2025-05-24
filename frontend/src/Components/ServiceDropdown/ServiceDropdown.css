@@ -1,0 +1,112 @@
+/* Fix for the service-hover and dropdown */
+.dropdown-grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+  width: 100%;
+}
+.dropdown-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 10px;
+  font-size: 14px;
+  overflow: hidden; /* prevent horizontal scroll */
+}
+
+/* Each column (main + subcategories) */
+.dropdown-column {
+  min-width: 150px;
+  max-width: 180px;
+}
+
+.main-category {
+  display: block;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #007bff;
+  text-decoration: none;
+}
+
+/* Style for sub-category links */
+.sub-category {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #333;
+  text-decoration: none;
+}
+.sub-category:hover {
+  text-decoration: underline;
+}
+
+/* Ensure consistent spacing and alignment in columns */
+
+.service-hover {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+}
+
+/* Service title styled like other nav links */
+.service-title {
+  cursor: pointer;
+  font-weight: 500;
+  color: #212529;
+  font-size: 1rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.custom-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%; /* dropdown appears below */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90vw;
+  max-width: 1200px;
+  background: #fff;
+  padding: 30px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  z-index: 99;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.service-hover:hover .custom-dropdown {
+  display: block;
+}
+
+/* Dropdown grid */
+.dropdown-grid {
+  display: flex;
+  gap: 30px;
+  flex-wrap: nowrap;
+}
+.dropdown-footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-top: 15%;
+  margin-right: 30px;
+  border-top: 1px solid #e0e0e0;
+  height: 25px;
+  width: 55px;
+}
+
+.view-more-btn {
+  font-size: 13px;
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  height: 25px;
+  width: 55px;
+}
+
+.view-more-btn:hover {
+  background-color: #0056b3;
+}

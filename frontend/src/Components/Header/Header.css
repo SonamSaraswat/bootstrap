@@ -1,0 +1,73 @@
+/* Header.css */
+
+/* Header container */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: white;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+  z-index: 1100;
+}
+
+/* Logo styling */
+.logo {
+  height: 80px;
+  cursor: pointer;
+}
+
+/* Nav items container */
+.header-items {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+}
+
+/* Individual nav items */
+.header-items li {
+  cursor: pointer;
+  position: relative; /* Needed for dropdown positioning */
+}
+
+/* Sign in button */
+.sign-in {
+  margin-right: 25px;
+  height: 40px;
+  padding: 5px 20px;
+  border-radius: 20px;
+  color: white;
+  background-color: #6ec1e4;
+  font-size: 18px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.sign-in:hover {
+  background-color: #5aa9d6;
+}
+
+/* Profile container and icon */
+.profile-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.profile-icon:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+
+
+/* On hover, caret can rotate if you want */
+/* .service-hover:hover > .dropdown-toggle::after {
+  transform: rotate(180deg);
+} */
