@@ -54,13 +54,13 @@ const Register = () => {
                 <input required type="password" className="form-control" placeholder="Password" name="password" onChange={handleChange} />
               </div>
 
-              <div className="mb-3">
+            {/* <div className="mb-3">
                 <label className="form-label">Role</label>
                 <select className="form-select" name="role" value={formData.role} onChange={handleChange}>
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
                 </select>
-              </div>
+              </div>*/} 
 
               <div className="mb-3">
                 <label className="form-label">Referred By (Referral ID)</label>

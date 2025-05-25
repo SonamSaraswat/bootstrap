@@ -29,4 +29,37 @@ router.get('/', (req, res) => {
 });
 
 
+router.get('/:blog_id', (req, res) => {
+  db.query('SELECT * FROM blogs WHERE blog_id = ?', [req.params.blog_id], (err, results) => {
+    if (err) return res.status(500).send(err);
+    if (results.length === 0) return res.status(404).send('Blog not found');
+    res.json(results[0]);
+  });
+});
+
+
+
+//update
+router.put('/:blog_id', (req, res) => {
+  const { title, content, description } = req.body;
+
+  if (!title || !content || !description) {
+    return res.status(400).send('Missing fields to update');
+  }
+
+  const sql = 'UPDATE blogs SET title = ?, content = ?, description = ?, updated_at = NOW() WHERE blog_id = ?';
+  db.query(sql, [title, content, description, req.params.blog_id], (err, result) => {
+    if (err) return res.status(500).send('Error updating blog');
+    res.json({ message: 'Blog updated successfully' });
+  });
+});
+
+router.delete('/:blog_id', (req, res) => {
+  db.query('DELETE FROM blogs WHERE blog_id = ?', [req.params.blog_id], (err, result) => {
+    if (err) return res.status(500).send('Error deleting blog');
+    res.json({ message: 'Blog deleted successfully' });
+  });
+});
+
+
 export default router;

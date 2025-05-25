@@ -87,4 +87,32 @@ router.get('/all', (req, res) => {
   });
 });
 
+router.get('/flat', (req, res) => {
+  const flatList = [];
+
+  db.query('SELECT id, name, slug, "main" AS level FROM main_categories', (err, main) => {
+    if (err) return res.status(500).json({ error: 'Main category error' });
+
+    db.query('SELECT id, name, slug, "sub" AS level, main_category_id AS parent_id FROM sub_categories', (err, sub) => {
+      if (err) return res.status(500).json({ error: 'Sub category error' });
+
+      db.query('SELECT id, name, slug, "subsub" AS level, sub_category_id AS parent_id FROM sub_sub_categories', (err, subsub) => {
+        if (err) return res.status(500).json({ error: 'Sub-sub category error' });
+
+        db.query('SELECT id, name, slug, "subsubsub" AS level, sub_sub_category_id AS parent_id FROM sub_sub_sub_categories', (err, subsubsub) => {
+          if (err) return res.status(500).json({ error: 'Sub-sub-sub category error' });
+
+          const flatList = [...main, ...sub, ...subsub, ...subsubsub];
+          res.json(flatList);
+        });
+      });
+    });
+  });
+});
+
+
+
+
+
+
 export default router;

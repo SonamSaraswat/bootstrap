@@ -4,7 +4,12 @@ import ViewUserModal from '../../Components/UserModals/ViewModal.jsx';
 import EditUserModal from '../../Components/UserModals/EditUserModal.jsx';
 import DeleteUserModal from '../../Components/UserModals/DeleteUserModal.jsx';
 import PrintUserModal from '../../Components/UserModals/PrintUserModal.jsx';
-import AddUserModal from "./AddUser"; 
+import AddUserModal from "./AddUser";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+
 
 const Users = () => {
   const [year, setYear] = useState('2025');
@@ -14,30 +19,30 @@ const Users = () => {
   const [totalEntries, setTotalEntries] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [users, setUsers] = useState([]);
-   const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
 
-const [selectedUser, setSelectedUser] = useState(null);
-const [modalType, setModalType] = useState('');
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [modalType, setModalType] = useState('');
 
 
   // Fetch users from backend
   const fetchUsers = async () => {
 
     const monthNames = {
-  January: 1,
-  February: 2,
-  March: 3,
-  April: 4,
-  May: 5,
-  June: 6,
-  July: 7,
-  August: 8,
-  September: 9,
-  October: 10,
-  November: 11,
-  December: 12
-};
-  const numericMonth = monthNames[month];
+      January: 1,
+      February: 2,
+      March: 3,
+      April: 4,
+      May: 5,
+      June: 6,
+      July: 7,
+      August: 8,
+      September: 9,
+      October: 10,
+      November: 11,
+      December: 12
+    };
+    const numericMonth = monthNames[month];
     try {
       const res = await axios.get(`http://localhost:5000/api/users`, {
         params: {
@@ -60,7 +65,7 @@ const [modalType, setModalType] = useState('');
   }, [searchTerm, year, month, currentPage, entriesPerPage]);
 
 
-    const handleOpenModal = (user, type) => {
+  const handleOpenModal = (user, type) => {
     setSelectedUser(user);
     setModalType(type);
   };
@@ -79,10 +84,12 @@ const [modalType, setModalType] = useState('');
       });
 
       if (res.ok) {
+        toast.success('User updated successfully!');
         fetchUsers();
         handleCloseModal();
       }
     } catch (err) {
+      toast.error('Error updating user!');
       console.error('Error updating user:', err);
     }
   };
@@ -91,11 +98,12 @@ const [modalType, setModalType] = useState('');
     try {
       const res = await fetch(`http://localhost:5000/api/users/${userId}`, { method: 'DELETE' });
       if (res.ok) {
-         alert("User deleted successfully!");
+        toast.success('User deleted successfully!');
         fetchUsers();
         handleCloseModal();
       }
     } catch (err) {
+      toast.error('Error updating user!');
       console.error('Error deleting user:', err);
     }
   };
@@ -130,9 +138,9 @@ const [modalType, setModalType] = useState('');
 
       {/* Add New Patient Button */}
       <div className="mb-3 text-end">
-       <button className="btn btn-primary mb-3" onClick={() => setShowAddModal(true)}>
-  <i className="bi bi-person-plus me-1"></i> Add New User
-</button>
+        <button className="btn btn-primary mb-3" onClick={() => setShowAddModal(true)}>
+          <i className="bi bi-person-plus me-1"></i> Add New User
+        </button>
       </div>
 
       {/* Table Controls */}
@@ -220,7 +228,7 @@ const [modalType, setModalType] = useState('');
       </div>
 
       {/* Pagination */}
- <div className="d-flex justify-content-between align-items-center mt-3">
+      <div className="d-flex justify-content-between align-items-center mt-3">
         <div>
           Showing {(currentPage - 1) * entriesPerPage + 1} to {Math.min(currentPage * entriesPerPage, totalEntries)} of {totalEntries} entries
         </div>
@@ -241,10 +249,10 @@ const [modalType, setModalType] = useState('');
           </button>
         </div>
       </div>
-       {modalType === 'view' && selectedUser && (
+      {modalType === 'view' && selectedUser && (
         <ViewUserModal user={selectedUser} onClose={handleCloseModal} />
       )}
-       {modalType === 'edit' && selectedUser && (
+      {modalType === 'edit' && selectedUser && (
         <EditUserModal user={selectedUser} onClose={handleCloseModal} onSave={handleSaveUser} />
       )}
       {modalType === 'delete' && selectedUser && (
@@ -256,12 +264,15 @@ const [modalType, setModalType] = useState('');
 
 
 
-       <AddUserModal
-  show={showAddModal}
-  onClose={() => setShowAddModal(false)}
-  onUserAdded={fetchUsers}
-/>
-      
+      <AddUserModal
+        show={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onUserAdded={fetchUsers}
+      />
+
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+
+
     </div>
   );
 };

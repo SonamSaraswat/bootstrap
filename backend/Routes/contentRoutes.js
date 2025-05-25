@@ -61,5 +61,74 @@ router.get('/service/:slug', (req, res) => {
 });
 
 
+//24/05/2025
+router.post('/create', async (req, res) => {
+  const { level, name, slug, parent_name } = req.body;
+
+  try {
+    // Map levels to tables and parent columns
+    const map = {
+      main: { table: 'main_categories', parentColumn: null, parentTable: null },
+      sub: { table: 'sub_categories', parentColumn: 'main_category_id', parentTable: 'main_categories' },
+      subsub: { table: 'sub_sub_categories', parentColumn: 'sub_category_id', parentTable: 'sub_categories' },
+      subsubsub: { table: 'sub_sub_sub_categories', parentColumn: 'sub_sub_category_id', parentTable: 'sub_sub_categories' },
+    };
+
+    if (!map[level]) {
+      return res.status(400).json({ error: 'Invalid level specified' });
+    }
+
+    const { table, parentColumn, parentTable } = map[level];
+
+    let parent_id = null;
+
+    if (level !== 'main') {
+      // Get parent id by name from the parentTable
+      const parentRows = await new Promise((resolve, reject) => {
+        db.query(
+          `SELECT id FROM ${parentTable} WHERE name = ?`,
+          [parent_name],
+          (err, results) => {
+            if (err) reject(err);
+            else resolve(results);
+          }
+        );
+      });
+
+      if (!parentRows.length) {
+        return res.status(400).json({ error: 'Parent category not found' });
+      }
+
+      parent_id = parentRows[0].id;
+    }
+
+    // Build insert query and values
+    let sql, values;
+    if (level === 'main') {
+      sql = `INSERT INTO ${table} (name, slug) VALUES (?, ?)`;
+      values = [name, slug];
+    } else {
+      sql = `INSERT INTO ${table} (name, slug, ${parentColumn}) VALUES (?, ?, ?)`;
+      values = [name, slug, parent_id];
+    }
+
+    await new Promise((resolve, reject) => {
+      db.query(sql, values, (err, results) => {
+        if (err) reject(err);
+        else resolve(results);
+      });
+    });
+
+    res.json({ success: true, message: 'Category created successfully' });
+
+  } catch (error) {
+    console.error('Error in create route:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
 export default router
 

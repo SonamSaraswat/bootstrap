@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from "axios";
+import ViewBlogModal from '../../Components/BlogModals/ViewBlogModal.jsx';
+import EditBlogModal from '../../Components/BlogModals/EditBlogModal.jsx';
+import DeleteBlogModal from '../../Components/BlogModals/DeleteBlogModal.jsx';
+import PrintBlogModal from '../../Components/BlogModals/PrintBlogModal.jsx';
+
 
 
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Ensure Bootstrap's JS is included
@@ -12,7 +17,11 @@ const AdminBlogs = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [blogs, setBlogs] = useState([]);
 
- 
+  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [modalType, setModalType] = useState('');
+
+
+
 
   const fetchBlogs = async () => {
     try {
@@ -34,8 +43,52 @@ const AdminBlogs = () => {
   }, [searchTerm, year, month]);
 
 
+  const handleOpenModal = (blog, type) => {
+    setSelectedBlog(blog);
+    setModalType(type);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedBlog(null);
+    setModalType('');
+  };
+
+ const handleSaveBlog = async (updatedBlog) => {
+  try {
+    const { blog_id, title, content, description } = updatedBlog;
+
+    if (!title || !content || !description) {
+      alert("All fields (title, content, description) are required.");
+      return;
+    }
+
+    console.log("Sending PUT data:", updatedBlog);
+
+    await axios.put(`http://localhost:5000/api/getblogs/${blog_id}`, {
+      title,
+      content,
+      description
+    });
+
+    fetchBlogs();
+    handleCloseModal();
+  } catch (err) {
+    console.error("Error updating blog:", err);
+  }
+};
 
 
+  const handleDeleteBlog = async (blogId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/getblogs/${blogId}`);
+      fetchBlogs();
+      handleCloseModal();
+    } catch (err) {
+      console.error("Error deleting blog:", err);
+    }
+  };
+
+ 
 
   return (
     <>
@@ -125,18 +178,19 @@ const AdminBlogs = () => {
                     <td>{blog.updated_at?.split("T")[0]}</td>
                     <td>
                       <div className="d-flex gap-2">
-                        <button className="btn btn-sm btn-outline-primary" title="Details" >
+                        <button className="btn btn-sm btn-outline-primary" title="Details" onClick={() => handleOpenModal(blog, 'view')}>
                           <i className="bi bi-eye"></i>
                         </button>
-                        <button className="btn btn-sm btn-outline-success" title="Edit" >
+                        <button className="btn btn-sm btn-outline-success" title="Edit" onClick={() => handleOpenModal(blog, 'edit')}>
                           <i className="bi bi-pencil"></i>
                         </button>
-                        <button className="btn btn-sm btn-outline-danger" title="Delete" >
+                        <button className="btn btn-sm btn-outline-danger" title="Delete" onClick={() => handleOpenModal(blog, 'delete')}>
                           <i className="bi bi-trash"></i>
                         </button>
-                        <button className="btn btn-sm btn-outline-secondary" title="Print" >
+                        <button className="btn btn-sm btn-outline-secondary" title="Print" onClick={() => handleOpenModal(blog, 'print')}>
                           <i className="bi bi-printer"></i>
                         </button>
+
                       </div>
                     </td>
                   </tr>
@@ -159,6 +213,20 @@ const AdminBlogs = () => {
           </div>
         </div>
       </div>
+
+      {modalType === 'view' && selectedBlog && (
+        <ViewBlogModal blog={selectedBlog} onClose={handleCloseModal} />
+      )}
+      {modalType === 'edit' && selectedBlog && (
+        <EditBlogModal blog={selectedBlog} onClose={handleCloseModal} onSave={handleSaveBlog} />
+      )}
+      {modalType === 'delete' && selectedBlog && (
+        <DeleteBlogModal blogId={selectedBlog.blog_id} onClose={handleCloseModal} onDelete={handleDeleteBlog} />
+      )}
+      {modalType === 'print' && selectedBlog && (
+        <PrintBlogModal blog={selectedBlog} onClose={handleCloseModal} />
+      )}
+
 
     </>
   );

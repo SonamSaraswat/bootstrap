@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 
+
+
 export default function AddUserModal({ show, onClose, onUserAdded }) {
   const [formData, setFormData] = useState({
     username: "",
@@ -20,7 +22,9 @@ export default function AddUserModal({ show, onClose, onUserAdded }) {
       await axios.post("http://localhost:5000/api/users/add", formData);
       onUserAdded(); // reload the table or show success
       onClose();
+      toast.success('User updated successfully!');
     } catch (err) {
+       toast.error('Failed to update user!');
       alert(err.response?.data || "Error adding user");
     }
   };
@@ -125,6 +129,8 @@ export default function AddUserModal({ show, onClose, onUserAdded }) {
           </div>
         </div>
       </div>
+      
+
     </div>
   );
 }

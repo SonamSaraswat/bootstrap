@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import AdminAddCategory from '../AdminDashboard/CategoryForm';
 
 const levelMap = {
   0: 'main',
@@ -16,30 +17,28 @@ const AdminTreeEditor = () => {
   const [selectedNode, setSelectedNode] = useState(null);
   const [editorContent, setEditorContent] = useState('');
 
-  // Fetch full nested tree
- useEffect(() => {
-  axios.get('http://localhost:5000/api/categories/all')
-    .then(res => {
-      // Convert nested subcategories objects to arrays recursively
-     const convertToArrays = (nodes) => {
-  if (!Array.isArray(nodes)) {
-    console.warn('Expected array but got:', nodes);
-    return []; // or handle accordingly
-  }
-  return nodes.map(node => ({
-    ...node,
-    subcategories: node.subcategories ? convertToArrays(Object.values(node.subcategories)) : [],
-    subsubcategories: node.subsubcategories ? convertToArrays(Object.values(node.subsubcategories)) : [],
-    subsubsubcategories: node.subsubsubcategories ? convertToArrays(Object.values(node.subsubsubcategories)) : []
-  }));
-};
+  const fetchTreeData = () => {
+    axios.get('http://localhost:5000/api/categories/all')
+      .then(res => {
+        const convertToArrays = (nodes) => {
+          if (!Array.isArray(nodes)) return [];
+          return nodes.map(node => ({
+            ...node,
+            subcategories: node.subcategories ? convertToArrays(Object.values(node.subcategories)) : [],
+            subsubcategories: node.subsubcategories ? convertToArrays(Object.values(node.subsubcategories)) : [],
+            subsubsubcategories: node.subsubsubcategories ? convertToArrays(Object.values(node.subsubsubcategories)) : []
+          }));
+        };
 
-      setTreeData(convertToArrays(res.data));
-    })
-    .catch(err => console.error(err));
-}, []);
+        setTreeData(convertToArrays(res.data));
+      })
+      .catch(err => console.error(err));
+  };
 
-  // When selectedNode changes, fetch its content from backend
+  useEffect(() => {
+    fetchTreeData();
+  }, []);
+
   useEffect(() => {
     if (!selectedNode) return;
     const { slug, level } = selectedNode;
@@ -48,40 +47,45 @@ const AdminTreeEditor = () => {
       .catch(() => setEditorContent(''));
   }, [selectedNode]);
 
-  // Toggle expand/collapse of a node by id
   const toggleNode = (id) => {
     setExpandedNodes(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  // Recursive Tree Renderer
   const renderTree = (nodes, depth = 0) => {
     if (!nodes || nodes.length === 0) return null;
 
     return nodes.map(node => {
       const isExpanded = expandedNodes[node.id] || false;
       const level = levelMap[depth];
-
-      // Determine children key based on depth
       let children = [];
+
       if (depth === 0) children = node.subcategories;
       else if (depth === 1) children = node.subsubcategories;
       else if (depth === 2) children = node.subsubsubcategories;
-      else children = [];
 
       return (
-        <div key={node.id} style={{ marginLeft: depth * 20, borderLeft: '1px solid #ccc', paddingLeft: 10, marginTop: 5 }}>
-          <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+        <div
+          key={node.id}
+          className="ms-3 border-start ps-3 my-2"
+          style={{ cursor: 'pointer' }}
+        >
+          <div className="d-flex align-items-center">
             {children.length > 0 && (
-              <button onClick={() => toggleNode(node.id)} style={{ marginRight: 5 }}>
-                {isExpanded ? '-' : '+'}
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary me-2"
+                onClick={() => toggleNode(node.id)}
+                aria-label={isExpanded ? 'Collapse' : 'Expand'}
+              >
+                {isExpanded ? '−' : '+'}
               </button>
             )}
-            <div 
+            <div
               onClick={() => setSelectedNode({ slug: node.slug, level })}
-              style={{ fontWeight: selectedNode?.slug === node.slug ? 'bold' : 'normal' }}
+              className={selectedNode?.slug === node.slug ? 'fw-bold' : ''}
               title={`Click to edit ${level} - ${node.name}`}
             >
-              {node.name} <small style={{ color: '#666' }}>({level})</small>
+              {node.name} <small className="text-muted">({level})</small>
             </div>
           </div>
           {isExpanded && renderTree(children, depth + 1)}
@@ -106,25 +110,44 @@ const AdminTreeEditor = () => {
   };
 
   return (
-    <div style={{ display: 'flex', gap: 40, padding: 20 }}>
-      <div style={{ width: '40%', border: '1px solid #ddd', padding: 10, height: '80vh', overflowY: 'auto' }}>
-        <h2>Category Tree</h2>
-        {renderTree(treeData)}
-      </div>
+    <div className="container-fluid py-3">
+      <div className="row">
+        {/* Left column: Tree + Add Category form */}
+        <div className="col-md-5 border rounded p-3" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+          <h2>Category Tree</h2>
+          {renderTree(treeData)}
 
-      <div style={{ width: '60%', display: 'flex', flexDirection: 'column' }}>
-        <h2>Content Editor</h2>
-        {selectedNode ? (
-          <>
-            <div>
-              <strong>Editing:</strong> {selectedNode.slug} ({selectedNode.level})
-            </div>
-            <ReactQuill theme="snow" value={editorContent} onChange={setEditorContent} style={{ height: '70vh', marginBottom: 10 }} />
-            <button onClick={handleSave} style={{ padding: '10px 20px', fontSize: 16 }}>Save Content</button>
-          </>
-        ) : (
-          <div>Select a category or service from the tree to edit content</div>
-        )}
+          <hr />
+
+          <h4 className="mt-4">Add New Category</h4>
+          <AdminAddCategory onCategoryAdded={fetchTreeData} />
+        </div>
+
+        {/* Right column: Content Editor */}
+        <div className="col-md-7 d-flex flex-column">
+          <h2>Content Editor</h2>
+          {selectedNode ? (
+            <>
+              <div className="mb-2">
+                <strong>Editing:</strong> {selectedNode.slug} ({selectedNode.level})
+              </div>
+              <ReactQuill
+                theme="snow"
+                value={editorContent}
+                onChange={setEditorContent}
+                style={{ height: '70vh', marginBottom: '3rem' }}
+              />
+              <button
+                className="btn btn-primary align-self-start"
+                onClick={handleSave}
+              >
+                Save Content
+              </button>
+            </>
+          ) : (
+            <div className="text-muted fst-italic">Select a category or service from the tree to edit content</div>
+          )}
+        </div>
       </div>
     </div>
   );

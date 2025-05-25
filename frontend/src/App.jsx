@@ -2,6 +2,11 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+
 import Home from './Pages/Home/Home'
 import { Route, Routes } from 'react-router-dom'
 import Refer from './Pages/Refer/Refer'
@@ -33,6 +38,7 @@ import Users from './Pages/AdminDashboard/Users.jsx'
 import UsersSearch from './Pages/AdminDashboard/UsersSearch.jsx'
 import AdminBlogs from './Pages/AdminDashboard/AdminBlogs.jsx'
 import { useLocation } from 'react-router-dom';
+
 
 
 function App() {
@@ -88,6 +94,8 @@ function App() {
 
     </Routes>
     <Footer/>
+
+    <ToastContainer position="top-right" autoClose={3000} />
    
     </>
   )

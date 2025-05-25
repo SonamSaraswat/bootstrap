@@ -7,6 +7,9 @@ import StoreContextProvider from './Context/StoreContext.jsx'
 import { AuthProvider } from './Context/AuthContext.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 createRoot(document.getElementById('root')).render(
 

@@ -130,7 +130,7 @@ const UsersSearch = () => {
 
     {/* Action Icons */}
     <div className="card-footer d-flex justify-content-end gap-3">
-      <button className="btn btn-sm btn-outline-primary" onClick={() => handleOpenModal(userData, 'Edit')}>
+      <button className="btn btn-sm btn-outline-primary" onClick={() => handleOpenModal(userData, 'edit')}>
         <i className="bi bi-pencil-square"></i> Edit
       </button>
       <button className="btn btn-sm btn-outline-danger" onClick={() => handleOpenModal(userData, 'delete')}>
@@ -139,7 +139,7 @@ const UsersSearch = () => {
       <button className="btn btn-sm btn-outline-secondary" onClick={() => handleOpenModal(userData, 'view')}>
         <i className="bi bi-info-circle"></i> Info
       </button>
-      <button className="btn btn-sm btn-outline-secondary" onClick={() => handleOpenModal(userData, 'Print')}>
+      <button className="btn btn-sm btn-outline-secondary" onClick={() => handleOpenModal(userData, 'print')}>
         <i className="bi bi-printer"></i> Print
       </button>
     </div>
