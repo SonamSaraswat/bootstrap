@@ -16,6 +16,7 @@ const AdminTreeEditor = () => {
   const [expandedNodes, setExpandedNodes] = useState({});
   const [selectedNode, setSelectedNode] = useState(null);
   const [editorContent, setEditorContent] = useState('');
+  const [price, setPrice] = useState('');
 
   const fetchTreeData = () => {
     axios.get('http://localhost:5000/api/categories/all')
@@ -42,9 +43,15 @@ const AdminTreeEditor = () => {
   useEffect(() => {
     if (!selectedNode) return;
     const { slug, level } = selectedNode;
-    axios.get(`http://localhost:5000/api/content/content/${level}/${slug}`)
-      .then(res => setEditorContent(res.data.content || ''))
-      .catch(() => setEditorContent(''));
+    axios.get(`http://localhost:5000/api/content/${level}/${slug}`)
+      .then(res => {
+        setEditorContent(res.data.content || '');
+        setPrice(res.data.price || '');
+      })
+      .catch(() => {
+        setEditorContent('');
+        setPrice('');
+      });
   }, [selectedNode]);
 
   const toggleNode = (id) => {
@@ -98,10 +105,11 @@ const AdminTreeEditor = () => {
     if (!selectedNode) return alert('Select a node to save content');
     const { slug, level } = selectedNode;
 
-    axios.post('http://localhost:5000/api/content/content', {
+    axios.post('http://localhost:5000/api/content', {
       slug,
       level,
-      content: editorContent
+      content: editorContent,
+      price: price || 0
     }).then(() => {
       alert('Content saved successfully!');
     }).catch(() => {
@@ -131,6 +139,21 @@ const AdminTreeEditor = () => {
               <div className="mb-2">
                 <strong>Editing:</strong> {selectedNode.slug} ({selectedNode.level})
               </div>
+
+              <div className="mb-3">
+                <label htmlFor="priceInput" className="form-label">Price (₹)</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="priceInput"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="Enter price for this category/service"
+                />
+              </div>
+
+
+
               <ReactQuill
                 theme="snow"
                 value={editorContent}
