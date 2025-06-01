@@ -37,7 +37,15 @@ import { useAuth } from './Context/AuthContext.jsx'
 import Users from './Pages/AdminDashboard/Users.jsx'
 import UsersSearch from './Pages/AdminDashboard/UsersSearch.jsx'
 import AdminBlogs from './Pages/AdminDashboard/AdminBlogs.jsx'
+import CheckoutPage from './Pages/Checkout/Checkout.jsx'
+import OrdersPage from './Pages/Dashboard/UserOrder.jsx'
+import ThankYou from './Pages/ThankYou';
+
+
 import { useLocation } from 'react-router-dom';
+import Orders from './Pages/AdminDashboard/Orders.jsx';
+import Payement from './Pages/AdminDashboard/Payement.jsx';
+
 
 
 
@@ -90,6 +98,12 @@ function App() {
          <Route path="/AdminBlogs" element={<AdminBlogs/>}/>
           <Route path="/Users" element={<Users/>}/>
            <Route path="/Users" element={<Users/>}/>
+           <Route path="/checkout/:cartItemId" element={<CheckoutPage />} />
+           <Route path="/Orders" element={<Orders/>}/>
+           <Route path="/Payement" element={<Payement/>}/>
+           <Route path="/OrdersPage" element={<OrdersPage/>} />
+           <Route path="/thank-you" element={<ThankYou />} />
+
 
 
     </Routes>

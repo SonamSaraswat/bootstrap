@@ -111,6 +111,29 @@ router.get('/flat', (req, res) => {
 });
 
 
+router.get("/:level/:slug", (req, res) => {
+  const { level, slug } = req.params;
+
+  const tableMap = {
+    main: "main_categories",
+    sub: "sub_categories",
+    subsub: "sub_sub_categories",
+    subsubsub: "sub_sub_sub_categories"
+  };
+
+  const table = tableMap[level];
+  if (!table) return res.status(400).json({ error: "Invalid category level" });
+
+  const query = `SELECT id, name FROM ${table} WHERE slug = ?`;
+
+  db.query(query, [slug], (err, results) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    if (results.length === 0) return res.status(404).json({ error: "Category not found" });
+
+    const { id, name } = results[0];
+    res.json({ category_id: id, category_name: name });
+  });
+});
 
 
 

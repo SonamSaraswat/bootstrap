@@ -80,7 +80,7 @@ export default function Dashboard() {
             ["bi-people", "Users", "Go to Users","/Users"],
             ["bi-search", "Search", "Search Users","/UsersSearch"],
             ["bi-journal-text", "Orders", "Go to Orders","/Orders"],
-            ["bi-credit-card", "Payments", "Go to Payments","/Payements"],
+            ["bi-credit-card", "Payments", "Go to Payments","/Payement"],
           ].map(([icon, title, link, linkpath], i) => (
             <div key={i} className="col-md-6 col-lg-3">
               <div className="card h-100 text-center border">

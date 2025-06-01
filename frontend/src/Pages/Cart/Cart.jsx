@@ -1,103 +1,100 @@
-import React, { useContext } from 'react';
-import { StoreContext } from '../../Context/StoreContext';
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../Context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
-const Cart = () => {
-  const { cartItems, models, removeFromCart, getTotalCartAmount } = useContext(StoreContext);
-  const navigate = useNavigate();
+const CartPage = () => {
+   const navigate = useNavigate();
+  const { user, isLoggedIn } = useAuth();
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!isLoggedIn || !user?.id) {
+      setError('You must be logged in to view your cart.');
+      setLoading(false);
+      return;
+    }
+
+    fetch(`http://localhost:5000/api/cart/${user.id}`)
+      .then(res => res.json())
+      .then(data => {
+        setCartItems(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error fetching cart items:", err);
+        setError('Failed to load cart items.');
+        setLoading(false);
+      });
+  }, [user, isLoggedIn]);
+
+  const handleRemove = (cartItemId) => {
+    fetch(`http://localhost:5000/api/cart/remove/${cartItemId}`, {
+      method: 'DELETE',
+    })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message || 'Item removed from cart.');
+        setCartItems(prev => prev.filter(item => item.id !== cartItemId));
+      })
+      .catch(err => {
+        console.error("Error removing cart item:", err);
+        alert('Failed to remove item.');
+      });
+  };
+
+  const handleBuyNow = (item) => {
+    navigate(`/checkout/${item.id}`);
+  };
+
+  if (loading) return <div className="alert alert-info">Loading cart...</div>;
+  if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
-    <div className="container my-5">
-      <h2 className="mb-4">Your Cart</h2>
-      <div className="table-responsive">
-        <table className="table table-bordered align-middle text-center">
-          <thead className="table-light">
+    <div className="container mt-4">
+      <h3 className="mb-4">Your Cart</h3>
+      {cartItems.length === 0 ? (
+        <div className="alert alert-warning">Your cart is empty.</div>
+      ) : (
+        <table className="table table-bordered table-hover">
+          <thead className="table-primary">
             <tr>
-              <th>Item</th>
-              <th>Title</th>
-              <th>Price</th>
-              <th>Quantity</th>
-              <th>Total</th>
-              <th>Remove</th>
+              <th>#</th>
+              <th>Category Name</th>
+              <th>Price (₹)</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {models.map((item) => {
-              if (cartItems[item.id] > 0) {
-                return (
-                  <tr key={item.id}>
-                    <td>
-                      <img src={item.img} alt={item.title} width="50" height="50" className="img-thumbnail" />
-                    </td>
-                    <td>{item.title}</td>
-                    <td>${item.price}</td>
-                    <td>{cartItems[item.id]}</td>
-                    <td>${item.price * cartItems[item.id]}</td>
-                    <td>
-                      <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => removeFromCart(item.id)}
-                      >
-                        ×
-                      </button>
-                    </td>
-                  </tr>
-                );
-              }
-              return null;
-            })}
+            {cartItems.map((item, index) => (
+              <tr key={item.id}>
+                <td>{index + 1}</td>
+                <td>{item.category_name}</td>
+                <td>{item.price}</td>
+                <td>
+                  <button
+                    className="btn btn-success btn-sm me-2"
+                    title="Buy Now"
+                    onClick={() => handleBuyNow(item)}
+                  >
+                    <i className="bi bi-cart-check"></i>
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    title="Remove"
+                    onClick={() => handleRemove(item.id)}
+                  >
+                    <i className="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
-      </div>
-
-      {/* Bottom Section */}
-      <div className="row mt-4">
-        {/* Total Summary */}
-        <div className="col-md-6 mb-3">
-          <div className="card shadow-sm">
-            <div className="card-body">
-              <h5 className="card-title">Cart Total</h5>
-              <ul className="list-group list-group-flush mb-3">
-                <li className="list-group-item d-flex justify-content-between">
-                  <span>Subtotal</span>
-                  <span>${getTotalCartAmount()}</span>
-                </li>
-                <li className="list-group-item d-flex justify-content-between">
-                  <span>Delivery Fee</span>
-                  <span>${getTotalCartAmount() === 0 ? 0 : 50}</span>
-                </li>
-                <li className="list-group-item d-flex justify-content-between fw-bold">
-                  <span>Total</span>
-                  <span>${getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 50}</span>
-                </li>
-              </ul>
-              <button
-                className="btn btn-primary w-100"
-                disabled={getTotalCartAmount() === 0}
-                onClick={() => navigate('/order')}
-              >
-                Proceed to Checkout
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Referral Code */}
-        <div className="col-md-6 mb-3">
-          <div className="card shadow-sm">
-            <div className="card-body">
-              <h6>If you have a referral code, enter it here:</h6>
-              <div className="input-group mt-2">
-                <input type="text" className="form-control" placeholder="Referral code" />
-                <button className="btn btn-outline-secondary" type="button">Submit</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
 
-export default Cart;
+export default CartPage;

@@ -110,3 +110,66 @@
 .view-more-btn:hover {
   background-color: #0056b3;
 }
+
+/* Existing styles remain unchanged above */
+
+/* Default: hide the dropdown */
+.custom-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90vw;
+  max-width: 1200px;
+  background: #fff;
+  padding: 30px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  z-index: 99;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+/* Hover to show dropdown (only on desktop) */
+@media (min-width: 769px) {
+  .service-hover:hover .custom-dropdown {
+    display: block;
+  }
+}
+
+/* Small screens: vertical layout */
+@media (max-width: 768px) {
+  .custom-dropdown {
+    left: 0;
+    transform: none;
+    width: 100vw;
+    padding: 20px;
+    display: none; /* hide by default on small screens */
+  }
+
+  .dropdown-grid {
+    flex-direction: column;
+    gap: 20px;
+    flex-wrap: nowrap;
+  }
+
+  .dropdown-column {
+    max-width: 100%;
+  }
+
+  .dropdown-footer {
+    margin-top: 20px;
+    width: auto;
+    align-items: flex-start;
+  }
+
+  .view-more-btn {
+    width: auto;
+  }
+
+}
+@media (min-width: 769px) {
+  .service-hover:hover .custom-dropdown {
+    display: block;
+  }
+}

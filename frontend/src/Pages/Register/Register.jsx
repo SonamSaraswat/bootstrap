@@ -34,7 +34,7 @@ const Register = () => {
   };
 
   return (
-  <div className="container min-vh-80 d-flex justify-content-center align-items-center">
+  <div className="container py-5 my-5  min-vh-80 d-flex justify-content-center align-items-center">
     <div className="w-80" style={{ maxWidth: '500px' }}>
       <div className="card shadow p-4">
         <h3 className="text-center mb-4">Register</h3>

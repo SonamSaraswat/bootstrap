@@ -8,6 +8,12 @@ import contentdata from "./Routes/content.js"
 import blogRoutes from "./Routes/blog.js"
 import  getUsers  from "./Routes/users.js"
 import blogsRecord from "./Routes/blogTable.js"
+import cartdata from "./Routes/cart.js"
+import orderRoutes from "./Routes/order.js"
+import paymentRoutes from './Routes/payment.js'
+import dotenv from 'dotenv';
+
+
 import multer from "multer"
 import path from "path"
 import bodyParser from "body-parser"
@@ -24,6 +30,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(cors());
 app.use(bodyParser.json());
+dotenv.config();
 
 
 
@@ -68,7 +75,9 @@ app.use('/api/content', contentdata);
 app.use('/api/blogs', blogRoutes);
 app.use("/api/users", getUsers);
 app.use("/api/getblogs", blogsRecord);
-
+app.use("/api/cart", cartdata);
+app.use("/api/order",orderRoutes);
+app.use('/api/payment', paymentRoutes);
 
 app.listen(5000,()=>{
     console.log("Connected")
